@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -8,12 +9,25 @@ import (
 	"github.com/zerobl21/greenlight/internal/data"
 )
 
-// Creates a new movie
+// Parses the user JSON response to create a new movie.
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Create a new movie")
+	var input struct {
+		Title   string   `json:"title"`
+		Year    int32    `json:"year"`
+		Runtime int32    `json:"runtime"`
+		Genres  []string `json:"genres"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+    return
+	}
+
+	fmt.Fprintf(w, "%+v\n", input)
 }
 
-// Returns the movie with the especified id
+// Returns the movie with the especified ID.
 func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParams(r)
 	if err != nil {
