@@ -1,6 +1,7 @@
 package data
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/zerobl21/greenlight/internal/validator"
@@ -36,4 +37,29 @@ func ValidateMovie(v *validator.Validator, movie *Movie) {
 	v.Check(len(movie.Genres) >= 1, "genres", "must contain at least 1 genre")
 	v.Check(len(movie.Genres) <= 5, "genres", "must not contain more than 5 genres")
 	v.Check(validator.Unique(movie.Genres), "genres", "must not contain duplicated values")
+}
+
+// Wraps the sql.DB connection pool.
+type MovieModel struct {
+	DB *sql.DB
+}
+
+// Insert a new record in the movie table.
+func (m *MovieModel) Insert(movie *Movie) error {
+	return nil
+}
+
+// Fetch a specific record from the movies table.
+func (m *MovieModel) Get(id int64) (*Movie, error) {
+	return nil, nil
+}
+
+// Update a specific record in the movies table.
+func (m *MovieModel) Update(movie *Movie) error {
+	return nil
+}
+
+// Delete a specific record from the movies table.
+func (m *MovieModel) Delete(id int64) error {
+	return nil
 }
