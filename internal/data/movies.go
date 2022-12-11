@@ -47,7 +47,7 @@ type MovieModel struct {
 }
 
 // Accepsts a pointer to move a movie struct, which should
-// contain the data for the new record
+// contain the data for the new record to add to the database
 func (m *MovieModel) Insert(movie *Movie) error {
 	query := `
     INSERT INTO movies (title, year, runtime, genres) 
@@ -95,7 +95,21 @@ func (m *MovieModel) Get(id int64) (*Movie, error) {
 
 // Update a specific record in the movies table.
 func (m *MovieModel) Update(movie *Movie) error {
-	return nil
+	query := `
+    UPDATE movies 
+    SET title = $1, year = $2, runtime = $3, genres = $4, version = version + 1
+    WHERE id = $5
+    RETURNING version`
+
+	args := []any{
+		movie.Title,
+		movie.Year,
+		movie.Runtime,
+		pq.Array(movie.Genres),
+		movie.ID,
+	}
+
+	return m.DB.QueryRow(query, args...).Scan(&movie.Version)
 }
 
 // Delete a specific record from the movies table.
