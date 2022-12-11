@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/lib/pq"
 	"github.com/zerobl21/greenlight/internal/validator"
 )
 
@@ -44,9 +45,17 @@ type MovieModel struct {
 	DB *sql.DB
 }
 
-// Insert a new record in the movie table.
+// Accepsts a pointer to move a movie struct, which should
+// contain the data for the new record
 func (m *MovieModel) Insert(movie *Movie) error {
-	return nil
+	query := `
+    INSERT INTO movies (title, year, runtime, genres) 
+    VALUES ($1, $2, $3, $4)
+    RETURNING id, created_at, version`
+
+	args := []any{movie.Title, movie.Year, movie.Runtime, pq.Array(movie.Genres)}
+
+	return m.DB.QueryRow(query, args...).Scan(&movie.ID, &movie.CreatedAt, &movie.Version)
 }
 
 // Fetch a specific record from the movies table.
