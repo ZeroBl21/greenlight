@@ -1,6 +1,10 @@
 package data
 
-import "github.com/zerobl21/greenlight/internal/validator"
+import (
+	"strings"
+
+	"github.com/zerobl21/greenlight/internal/validator"
+)
 
 // struct which holds the valid filtering parameters.
 type Filters struct {
@@ -8,6 +12,28 @@ type Filters struct {
 	PageSize     int
 	Sort         string
 	SortSafelist []string
+}
+
+// Check if the client-provided Sort field matches one of the entries in the
+// SortSafelist and if it does.
+func (f Filters) sortColumn() string {
+	for _, safeValue := range f.SortSafelist {
+		if f.Sort == safeValue {
+			return strings.TrimPrefix(f.Sort, "-")
+		}
+	}
+
+	panic("unsafe sort parameter: " + f.Sort)
+}
+
+// Returns the sort direction ("ASC" or "DESC") depending on the prefix character
+// of the Sort field
+func (f Filters) sortDirection() string {
+	if strings.HasPrefix(f.Sort, "-") {
+		return "DESC"
+	}
+
+	return "ASC"
 }
 
 func ValidateFilters(v *validator.Validator, f Filters) {
