@@ -56,7 +56,13 @@ func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Requ
 	app.errorResponse(w, r, http.StatusConflict, message)
 }
 
-// Sends a 422 Unprocessable Entity staus code if a JSON validation fails.
+// Sends a 422 Unprocessable Entity status code if a JSON validation fails.
 func (app *application) failedValidationResponse(w http.ResponseWriter, r *http.Request, errors map[string]string) {
 	app.errorResponse(w, r, http.StatusUnprocessableEntity, errors)
+}
+
+// Sends a 429 Too Many Request status code if the rqeuest limit is exceeded.
+func (app *application) rateLimitExceededResponse(w http.ResponseWriter, r *http.Request) {
+	message := "rate limit exceeded"
+	app.errorResponse(w, r, http.StatusTooManyRequests, message)
 }
