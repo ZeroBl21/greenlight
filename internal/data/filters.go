@@ -1,6 +1,7 @@
 package data
 
 import (
+	"math"
 	"strings"
 
 	"github.com/zerobl21/greenlight/internal/validator"
@@ -51,4 +52,29 @@ func ValidateFilters(v *validator.Validator, f Filters) {
 	v.Check(f.PageSize <= 100, "page_size", "must be a maximum of 100")
 
 	v.Check(validator.PermittedValue(f.Sort, f.SortSafelist...), "sort", "invalid sort value")
+}
+
+// Holds the pagination Metadata.
+type Metadata struct {
+	CurrentPage  int `json:"current_page,omitempty"`
+	PageSize     int `json:"page_size,omitempty"`
+	FirstPage    int `json:"first_page,omitempty"`
+	LastPage     int `json:"last_page,omitempty"`
+	TotalRecords int `json:"total_records,omitempty"`
+}
+
+// Calculates the pagination metadata values given the total number of records,
+// current page and page size values.
+func calculateMetadata(totalRecords, page, pageSize int) Metadata {
+	if totalRecords == 0 {
+		return Metadata{}
+	}
+
+	return Metadata{
+		CurrentPage:  page,
+		PageSize:     pageSize,
+		FirstPage:    1,
+		LastPage:     int(math.Ceil(float64(totalRecords) / float64(pageSize))),
+		TotalRecords: totalRecords,
+	}
 }
