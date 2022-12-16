@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/zerobl21/greenlight/internal/validator"
@@ -110,8 +111,7 @@ func (m UserModel) Insert(user *User) error {
 		&user.CreatedAt, &user.Version)
 	if err != nil {
 		switch {
-		case err.Error() == `pd: duplicate key value violates unique
-    constraint "users_email_key"`:
+		case err.Error() == `pq: duplicate key value violates unique constraint "users_email_key"`:
 			return ErrDuplicateEmail
 		default:
 			return err
