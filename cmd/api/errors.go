@@ -38,6 +38,12 @@ func (app *application) badRequestResponse(w http.ResponseWriter, r *http.Reques
 	app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 }
 
+// Sends a 401 Unauthorized status code and JSON rsposne to the client.
+func (app *application) invalidCredentialsResponse(w http.ResponseWriter, r *http.Request) {
+	message := "invalid authentication credentials"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
 // Sends a 404 Not Found Status code and JSON response to the client.
 func (app *application) notFoundResponse(w http.ResponseWriter, r *http.Request) {
 	message := "the requested resource could not be found"
