@@ -33,14 +33,22 @@ func (app *application) serverErrorResponse(w http.ResponseWriter, r *http.Reque
 	app.errorResponse(w, r, http.StatusInternalServerError, message)
 }
 
-// Sends a 400 Bad Request status code and JSON rsposne to the client.
+// Sends a 400 Bad Request status code and JSON response to the client.
 func (app *application) badRequestResponse(w http.ResponseWriter, r *http.Request, err error) {
 	app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 }
 
-// Sends a 401 Unauthorized status code and JSON rsposne to the client.
+// Sends a 401 Unauthorized status code and JSON response to the client.
 func (app *application) invalidCredentialsResponse(w http.ResponseWriter, r *http.Request) {
 	message := "invalid authentication credentials"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
+// Sends a 401 Unauthorized status code and JSON response to the client if have a invalid token.
+func (app *application) invalidAuthenticationTokenResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("WWW-Authenticate", "Bearer")
+
+	message := "invalid or missing authentication token"
 	app.errorResponse(w, r, http.StatusUnauthorized, message)
 }
 

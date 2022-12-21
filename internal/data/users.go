@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/zerobl21/greenlight/internal/validator"
@@ -13,6 +12,8 @@ import (
 )
 
 var ErrDuplicateEmail = errors.New("duplicate email")
+
+var AnonymousUser = &User{}
 
 // The User struct represends an individual User from the database.
 type User struct {
@@ -23,6 +24,10 @@ type User struct {
 	Password  password  `json:"-"`
 	Activated bool      `json:"activated"`
 	Version   int       `json:"-"`
+}
+
+func (u *User) IsAnonymous() bool {
+	return u == AnonymousUser
 }
 
 // Custom password struct contain the plaintext and hashed versions of the password
