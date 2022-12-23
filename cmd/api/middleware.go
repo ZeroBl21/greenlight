@@ -11,6 +11,7 @@ import (
 
 	"github.com/zerobl21/greenlight/internal/data"
 	"github.com/zerobl21/greenlight/internal/validator"
+
 	"golang.org/x/time/rate"
 )
 
@@ -86,6 +87,8 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 	})
 }
 
+// Check if the user is authenticated, if not set the user has AnonymousUser, if not
+// validates the user token
 func (app *application) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Authorization")
@@ -120,11 +123,41 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			default:
 				app.serverErrorResponse(w, r, err)
 			}
-      return
+			return
 		}
 
 		r = app.contextSetUser(r, user)
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+// Checks that a suer is not anonymous
+func (app *application) requireAuthenticatedUser(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := app.contextGetUser(r)
+
+		if user.IsAnonymous() {
+			app.authenticationRequiredResponse(w, r)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+// Checks if the user is authenticated and activated.
+func (app *application) requireActivatedUser(next http.HandlerFunc) http.HandlerFunc {
+	fn := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := app.contextGetUser(r)
+
+		if !user.Activated {
+			app.inactiveAccountResponse(w, r)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+
+	return app.requireActivatedUser(fn)
 }
