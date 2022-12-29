@@ -15,12 +15,13 @@ import (
 	"github.com/zerobl21/greenlight/internal/data"
 	"github.com/zerobl21/greenlight/internal/jsonlog"
 	"github.com/zerobl21/greenlight/internal/mailer"
+	"github.com/zerobl21/greenlight/internal/vcs"
 
 	_ "github.com/lib/pq"
 )
 
 // String containing the application version number.
-const version = "1.0.0"
+var version = vcs.Version()
 
 // Holds all the configuration settings of the application.
 type config struct {
