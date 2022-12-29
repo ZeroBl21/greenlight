@@ -12,6 +12,11 @@
 *.so
 *.dylib
 
+# Environtment variables
+.env
+.envrc
+.env.example
+
 # Test binary, built with `go test -c`
 *.test
 
