@@ -1,13 +1,21 @@
 # Include variables form the .envrc file
 include .envrc
 
+# ==================================================================================== #
+# HELPERS
+# ==================================================================================== #
+
 .PHONY: help
 help: ## Prints help for targets with comments
 	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_/]+:.*?## .*$$' | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: help
+.PHONY: confirm
 confirm: 
 	@echo -n 'Are you sure? [y/N] ' && read ans && [ $${ans:-N} = y ]
+
+# ==================================================================================== #
+# DEVELOPMENT
+# ==================================================================================== #
 
 .PHONY: run/api
 run/api: ## Run the cmd/api application
@@ -26,3 +34,20 @@ db/migrations/new: ## create a new database migration
 db/migration/up: confirm ## apply all up database migrations
 	@echo 'Running up migrations...'
 	migrate -path ./migrations -database ${GREENLIGHT_DB_DSN} up
+
+# ==================================================================================== #
+# QUALITY CONTROL
+# ==================================================================================== #
+
+.PHONY: audit
+audit: ## tidy dependencies and format, vet and test all code
+	@echo 'Tidying and verifying module dependencies...'
+	go mod tidy
+	go mod verify
+	@echo 'Formatting code...'
+	go fmt ./...
+	@echo 'Vetting code...'
+	go vet ./...
+	staticcheck ./...
+	@echo 'Running tests...'
+	go test -race -vet=off ./...
