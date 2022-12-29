@@ -17,6 +17,9 @@
 .envrc
 .env.example
 
+# Vendor
+vendor/
+
 # Test binary, built with `go test -c`
 *.test
 
