@@ -149,9 +149,9 @@ func (m *MovieModel) GetAll(title string, genres []string, filters Filters) ([]*
 		return nil, Metadata{}, err
 	}
 
-  metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
 
-	return movies, metadata,nil
+	return movies, metadata, nil
 }
 
 // Update a specific record in the movies table, with optimistic locking.

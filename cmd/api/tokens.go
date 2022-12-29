@@ -43,7 +43,7 @@ func (app *application) createAuthenticationTokenHandler(w http.ResponseWriter, 
 	}
 
 	match, err := user.Password.Matches(input.Password)
-	if !match {
+	if !match || err != nil {
 		app.invalidCredentialsResponse(w, r)
 		return
 	}
