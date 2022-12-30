@@ -101,7 +101,7 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 
 		headerParts := strings.Split(authorizationHeader, " ")
 		if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-			app.invalidCredentialsResponse(w, r)
+			app.invalidAuthenticationTokenResponse(w, r)
 			return
 		}
 

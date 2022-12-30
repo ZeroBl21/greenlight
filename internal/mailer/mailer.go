@@ -22,7 +22,7 @@ type Mailer struct {
 // Returns a new Dialer instance which contains the dialer and sender information.
 func New(host string, port int, username, password, sender string) Mailer {
 	dialer := mail.NewDialer(host, port, username, password)
-	dialer.Timeout = 5 * time.Second
+	dialer.Timeout = 10 * time.Second
 
 	return Mailer{
 		dialer: dialer,
@@ -71,7 +71,7 @@ func (m Mailer) Send(recipent, templateFile string, data any) error {
 			return nil
 		}
 
-		time.Sleep(700 * time.Millisecond)
+		time.Sleep(1300 * time.Millisecond)
 	}
 
 	return nil
