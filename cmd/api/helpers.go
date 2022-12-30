@@ -149,7 +149,7 @@ func (app *application) readInt(qs url.Values, key string, defaultValue int, v *
 	return i
 }
 
-// accepts any function with the signature func() as a parameter and stores it in
+// Accepts any function with the signature func() as a parameter and stores it in
 // the variable fn. It then spins up a background goroutine, uses a deferred function
 // to recover any panics and log the error, and then executes the function itself
 // by calling fn().
